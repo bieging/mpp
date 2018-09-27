@@ -16,6 +16,10 @@ initial
 		instruction = 8'b00000000;
 		in = 8'b00000000;
 		out = 8'b00000000;
+		
+		#100
+		
+		$finish
 	end
 		  
 endmodule
