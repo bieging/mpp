@@ -16,4 +16,9 @@ module mpp (clk, instruction, in, out);
 			.ctrl_signals	(ctrl_signals)
 		);
 
+	initial
+		begin
+			out = 8'b00000000;
+		end
+	
 endmodule
