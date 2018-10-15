@@ -8,8 +8,8 @@ wire [7:0] out;
 
 mpp m1 (.clk         (clk),
         .instruction (instruction),
-		  .in          (in),
-		  .out         (out));
+		.in          (in),
+		.out         (out));
 
 initial
 	begin

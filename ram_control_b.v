@@ -19,7 +19,7 @@ module ram_control_b
             data = 16'b0000000000000000;
         end
     
-    always @ (posedge addr)
+    always @ (addr)
         begin
             if (en == 1'b1)
                 begin

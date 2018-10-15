@@ -7,12 +7,12 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	reg cs;
 	
 	reg [3:0] decode_address;
-	reg [7:0] ctrl_a_address;
-	reg [7:0] ctrl_b_address;
 	
 	reg [29:0] ctrl_signals;
 	
 	reg [7:0] decode_reg;
+	
+	reg [7:0] ctrl_addr;
 	
 	wire [7:0] decode_data;
 	wire [15:0] ctrl_a_data;
@@ -21,7 +21,7 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	ram_decode ram_dec
 		(
 			.clk		(clk),
-			.en		(cs),
+			.en			(cs),
 			.addr		(decode_address),
 			.data		(decode_data)
 		);
@@ -29,16 +29,16 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	ram_control_a ram_ctrl_a
 		(
 			.clk		(clk),
-			.en		(cs),
-			.addr		(ctrl_a_address),
+			.en			(cs),
+			.addr		(ctrl_addr),
 			.data		(ctrl_a_data)
 		);
 	
 	ram_control_b ram_ctrl_b
 		(
 			.clk		(clk),
-			.en		(cs),
-			.addr		(ctrl_b_address),
+			.en			(cs),
+			.addr		(ctrl_addr),
 			.data		(ctrl_b_data)
 		);
 		
@@ -48,9 +48,7 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 			decode_address = 4'b0000;
 			decode_reg = 8'b00000000;
-			
-			ctrl_a_address = 8'b00000000;
-			ctrl_b_address = 8'b00000000;
+			ctrl_addr  = 8'b00000000;
 		end
 		
 	always @ (posedge ctrl_a_data[3])
@@ -69,15 +67,19 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	always @ (posedge clk)
 		begin
-			decode_reg = decode_data;
-			
-			if (ctrl_a_data[4] == 1'b1)
+			ctrl_addr <= decode_reg;
+		end
+		
+	always @ (decode_data or ctrl_addr)
+		begin
+			if (ctrl_a_data[4] == 1'b0)
 				begin
-					decode_reg = decode_reg + 1;
+					decode_reg = ctrl_addr + 1;
 				end
-				
-			ctrl_a_address = decode_reg;
-			ctrl_b_address = decode_reg;
+			else
+				begin
+					decode_reg = decode_data;
+				end
 		end
 		
 	always @ (ctrl_a_data or ctrl_b_data)
