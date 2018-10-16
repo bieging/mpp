@@ -5,9 +5,11 @@ reg [7:0] instruction;
 reg [7:0] in;
 
 wire [7:0] out;
+wire [4:0] out_signals;
 
 mpp m1 (.clk         (clk),
         .instruction (instruction),
+		.out_signals (out_signals),
 		.in          (in),
 		.out         (out));
 

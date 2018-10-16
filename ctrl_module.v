@@ -2,13 +2,13 @@ module ctrl_module (clk, instruction, ctrl_signals);
 
 	input clk;
 	input [7:0] instruction;
-	output [27:0] ctrl_signals;
+	output [28:0] ctrl_signals;
 	
 	reg cs;
 	
 	reg [3:0] decode_address;
 	
-	reg [29:0] ctrl_signals;
+	reg [28:0] ctrl_signals;
 	
 	reg [7:0] decode_reg;
 	
