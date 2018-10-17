@@ -14,9 +14,13 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	
 	reg [7:0] ctrl_addr;
 	
+	wire pclh_condition;
+	
 	wire [7:0] decode_data;
 	wire [15:0] ctrl_a_data;
 	wire [15:0] ctrl_b_data;
+	
+	wire [7:0] incr_result;
 	
 	ram_decode ram_dec
 		(
@@ -51,6 +55,10 @@ module ctrl_module (clk, instruction, ctrl_signals);
 			ctrl_addr  = 8'b00000000;
 		end
 		
+	assign incr_result = ctrl_addr + 1;
+		
+	nor u1 (pclh_condition, ctrl_a_data[1], ctrl_a_data[2]);
+		
 	always @ (posedge ctrl_a_data[3])
 		begin
 			decode_address[0] = instruction[0];
@@ -72,9 +80,10 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	always @ (decode_data or ctrl_addr)
 		begin
+			#5
 			if (ctrl_a_data[4] == 1'b0)
 				begin
-					decode_reg = ctrl_addr + 1;
+					decode_reg = incr_result;
 				end
 			else
 				begin
@@ -84,13 +93,32 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	always @ (ctrl_a_data or ctrl_b_data)
 		begin
+			decode_address[3] = ctrl_a_data[5];
+		
 			ctrl_signals[0] = ctrl_a_data[6]; // ROMrd
 			ctrl_signals[1] = ctrl_a_data[7]; // ROMcs
 			ctrl_signals[2] = ctrl_a_data[8]; // PCHbus
 			ctrl_signals[3] = ctrl_a_data[9]; // PCLbus
 			
 			// PCHcar
-			// PCHcar
+			if (ctrl_a_data[10] == 1'b1 & pclh_condition == 1'b1)
+				begin
+					ctrl_signals[4] = 1'b1;
+				end
+			else
+				begin
+					ctrl_signals[4] = 1'b0;
+				end
+			
+			// PCLcar
+			if (ctrl_a_data[11] == 1'b1 & pclh_condition == 1'b1)
+				begin
+					ctrl_signals[5] = 1'b1;
+				end
+			else
+				begin
+					ctrl_signals[5] = 1'b0;
+				end
 			
 			ctrl_signals[6] = ctrl_a_data[12]; // SelDataPC
 			
