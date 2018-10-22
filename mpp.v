@@ -1,4 +1,4 @@
-module mpp (clk, instruction, out_signals, program_addr, in, out);
+	module mpp (clk, instruction, out_signals, program_addr, in, out);
 
 	input clk;
 	input [7:0] instruction;

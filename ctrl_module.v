@@ -24,7 +24,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	
 	ram_decode ram_dec
 		(
-			.clk		(clk),
 			.en			(cs),
 			.addr		(decode_address),
 			.data		(decode_data)
@@ -32,7 +31,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	ram_control_a ram_ctrl_a
 		(
-			.clk		(clk),
 			.en			(cs),
 			.addr		(ctrl_addr),
 			.data		(ctrl_a_data)
@@ -40,7 +38,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	
 	ram_control_b ram_ctrl_b
 		(
-			.clk		(clk),
 			.en			(cs),
 			.addr		(ctrl_addr),
 			.data		(ctrl_b_data)
@@ -75,7 +72,28 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	always @ (posedge clk)
 		begin
-			ctrl_addr <= decode_reg;
+			// Instruction buffer reset.
+			if (ctrl_a_data[0] == 1'b1)
+				begin
+					ctrl_addr = 8'b00000000;
+				end
+			else
+				begin
+					ctrl_addr <= decode_reg;
+				end
+		end
+		
+	always @ (clk)
+		begin
+			// SPcar
+			if (ctrl_a_data[14] == 1'b1 & clk == 1'b1)
+				begin
+					ctrl_signals[8] = 1'b1;
+				end
+			else
+				begin
+					ctrl_signals[8] = 1'b0;
+				end
 		end
 		
 	always @ (decode_data or ctrl_addr)
@@ -93,8 +111,10 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	always @ (ctrl_a_data or ctrl_b_data)
 		begin
+			// 4th address decoder signal.
 			decode_address[3] = ctrl_a_data[5];
-		
+			
+			// Control signals.
 			ctrl_signals[0] = ctrl_a_data[6]; // ROMrd
 			ctrl_signals[1] = ctrl_a_data[7]; // ROMcs
 			ctrl_signals[2] = ctrl_a_data[8]; // PCHbus
@@ -124,11 +144,11 @@ module ctrl_module (clk, instruction, ctrl_signals);
 			
 			ctrl_signals[7] = ctrl_a_data[13]; // DIRcar
 			
-			// SPcar
+			// 8 on clk's always.
 			ctrl_signals[9] = ctrl_a_data[15]; // SPincdec
 			ctrl_signals[10] = ctrl_b_data[0]; // SelSP
 			
-			// 11..15 on ctrl_a_data[3]'s always
+			// 11..15 on ctrl_a_data[3]'s always.
 			
 			ctrl_signals[16] = ctrl_b_data[11]; // OUTcar
 			
@@ -147,8 +167,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 			ctrl_signals[25] = ctrl_b_data[2]; // BUFcar
 			
 			ctrl_signals[26] = ctrl_b_data[6]; // ULAbus
-			
-			// Reset
 			
 			// EOI
 			if (decode_data == 8'b00000000)

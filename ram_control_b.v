@@ -1,12 +1,10 @@
 module ram_control_b
     (
-        clk,
         en,
         addr,
         data
     );
     
-    input clk;
     input en;
     input [7:0] addr;
     

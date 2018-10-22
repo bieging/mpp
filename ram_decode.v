@@ -1,12 +1,10 @@
 module ram_decode
     (
-        clk,
         en,
         addr,
         data
     );
     
-    input clk;
     input en;
     input [3:0] addr;
     
