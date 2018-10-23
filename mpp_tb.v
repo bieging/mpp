@@ -1,7 +1,7 @@
 module mpp_tb ();
 
 	reg clk;
-	inout [7:0] in [255:0];
+	reg [7:0] in;
 
 	wire [7:0] out;
 	wire [4:0] out_signals;
