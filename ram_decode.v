@@ -19,7 +19,7 @@ module ram_decode
     
     always @ (addr)
         begin
-            if (en == 1'b1)
+            if (en == 1'b0)
                 begin
                     case (addr)
                         4'b0000: data = 8'b00000011;

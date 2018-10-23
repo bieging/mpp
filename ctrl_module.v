@@ -45,7 +45,7 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		
 	initial
 		begin
-			cs = 1'b1;
+			cs = 1'b0;
 		
 			decode_address = 4'b0000;
 			decode_reg = 8'b00000000;

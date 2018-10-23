@@ -19,7 +19,7 @@ module ram_control_a
     
     always @ (addr)
         begin
-            if (en == 1'b1)
+            if (en == 1'b0)
                 begin
                     case (addr)
                         8'b00000000: data = 16'b0000000000000000;
