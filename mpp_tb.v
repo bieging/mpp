@@ -26,7 +26,7 @@ module mpp_tb ();
 			clk = 1'b0;
 			in = 8'b00000000;
 			
-			#2000
+			#6000
 			
 			$finish;
 		end
@@ -67,7 +67,7 @@ module mpp_tb ();
                         'h000F: instruction = 'h07;
                         'h0010: instruction = 'h03;
                         'h0011: instruction = 'h00;
-						'h0012: instruction = 'h00;
+						'h0012: instruction = 'h05;
                         
 						'h0013: instruction = 'h00;
 					endcase

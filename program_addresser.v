@@ -21,6 +21,9 @@ module program_addresser
 	reg [7:0] out_high;
 	
 	// Regs and wires.
+	reg prev_pcl_state;
+	reg prev_pch_state;
+	
 	reg [7:0] mid_low;
 	reg [7:0] mid_high;
 	
@@ -32,6 +35,9 @@ module program_addresser
 		begin
 			out_low  = 8'b00000000;
 			out_high = 8'b00000000;
+			
+			prev_pcl_state = 1'b0;
+			prev_pch_state = 1'b0;
 			
 			mid_low  = 8'b00000000;
 			mid_high = 8'b00000000;
@@ -92,7 +98,7 @@ module program_addresser
 				end
 			
 			// Clock L (PCLcar).
-			if (ctrl_signals[2] == 1'b1)
+			if (ctrl_signals[2] == 1'b1 & prev_pcl_state == 1'b0)
 				begin
 					out_low = mid_low;
 					
@@ -105,12 +111,12 @@ module program_addresser
 					incr_input[5] = out_low[5];
 					incr_input[6] = out_low[6];
 					incr_input[7] = out_low[7];
-					
-					incr_input[0] = out_low[0];
 				end
 			
+			prev_pcl_state = ctrl_signals[2];
+			
 			// Clock H (PCHcar).
-			if (ctrl_signals[1] == 1'b1)
+			if (ctrl_signals[1] == 1'b1 & prev_pch_state == 1'b0)
 				begin
 					out_low = mid_low;
 					
@@ -124,6 +130,8 @@ module program_addresser
 					incr_input[14] = out_high[6];
 					incr_input[15] = out_high[7];
 				end
+			
+			prev_pch_state = ctrl_signals[1];
 		end
 	
 endmodule

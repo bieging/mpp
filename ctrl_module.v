@@ -2,13 +2,13 @@ module ctrl_module (clk, instruction, ctrl_signals);
 
 	input clk;
 	input [7:0] instruction;
-	output [28:0] ctrl_signals;
+	output [27:0] ctrl_signals;
 	
 	reg cs;
 	
 	reg [3:0] decode_address;
 	
-	reg [28:0] ctrl_signals;
+	reg [27:0] ctrl_signals;
 	
 	reg [7:0] decode_reg;
 	
@@ -83,19 +83,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 				end
 		end
 		
-	always @ (clk)
-		begin
-			// SPcar
-			if (ctrl_a_data[14] == 1'b1 & clk == 1'b1)
-				begin
-					ctrl_signals[8] = 1'b1;
-				end
-			else
-				begin
-					ctrl_signals[8] = 1'b0;
-				end
-		end
-		
 	always @ (decode_data or ctrl_addr)
 		begin
 			#5
@@ -140,8 +127,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 					ctrl_signals[5] = 1'b0;
 				end
 			
-			ctrl_signals[6] = ctrl_a_data[12]; // SelDataPC
-			
 			ctrl_signals[7] = ctrl_a_data[13]; // DIRcar
 			
 			// 8 on clk's always.
@@ -171,7 +156,17 @@ module ctrl_module (clk, instruction, ctrl_signals);
 			// EOI
 			if (decode_data == 8'b00000000)
 				begin
-					ctrl_signals[28] = ctrl_b_data[6]; 
+					ctrl_signals[27] = ctrl_b_data[6]; 
+				end
+			
+			#5 // Signals that have to wait to avoid race condition.
+			
+			ctrl_signals[6] = ctrl_a_data[12]; // SelDataPC
+			
+			// SPcar
+			if (clk == 1'b1)
+				begin
+					ctrl_signals[8] = ctrl_a_data[14];
 				end
 		end
 
