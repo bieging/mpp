@@ -18,6 +18,9 @@
 	
 	reg [7:0] dir_sp_buffer;
 	
+	reg [1:0] reg_bank_sel;
+	wire [7:0] reg_bank_out;
+	
 	reg reset;
 	
 	reg [7:0] bus;
@@ -66,6 +69,16 @@
 			.data_out	(storage_data_out)
 		);
 
+	reg_bank rb
+		(
+			.sel	(reg_bank_sel),
+			.en		(ctrl_signals[22]),
+			.load	(ctrl_signals[21]),
+			.reset	(reset),
+			.in		(bus),
+			.out	(reg_bank_out)
+		);
+		
 	initial
 		begin
 			out = 8'b00000000;
@@ -102,20 +115,8 @@
 			
 			storage_data_in = instruction;
 			
-//			if (storage_rw == 1'b1)
-//				begin
-////					bus = instruction;
-////					storage_data_in = 8'b00000000;	// Zero storage input when so it won't save any values.
-//				end
-//			else if (out_signals[0] == 1'b1)
-//				begin
-////					bus = storage_data_out;
-////					storage_data_in = 8'b00000000;	// Zero storage input when so it won't save any values.
-//				end
-//			else
-//				begin
-////					storage_data_in = bus;
-//				end
+			reg_bank_sel[0] = ctrl_signals[14];
+			reg_bank_sel[1] = ctrl_signals[15];
 			
 			// DIR buffer.
 			if (ctrl_signals[7] == 1'b1)
@@ -139,15 +140,19 @@
 			storage_cs = 0; // RAMcs
 		end
 		
-	always @ (storage_data_out or instruction)
+	always @ (storage_data_out or instruction or ctrl_signals[22])
 		begin
-			if (storage_rw == 1'b1)
+			if (out_signals[0] == 1'b1)
 				begin
 					bus = instruction;
 				end
-			else if (out_signals[0] == 1'b1)
+			else if (storage_rw == 1'b1)
 				begin
 					bus = storage_data_out;
+				end
+			else if (ctrl_signals[22] == 1'b1)
+				begin
+					bus = reg_bank_out;
 				end
 		end
 	

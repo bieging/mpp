@@ -47,29 +47,38 @@ module mpp_tb ();
 				begin
 					case (in_program_addr)
                         'h0000: instruction = 'h07;
-                        'h0001: instruction = 'hC0;
-                        'h0002: instruction = 'h44;
-                        'h0003: instruction = 'hC1;
-						'h0004: instruction = 'hCB;
+                        'h0001: instruction = 'hC1;
+                        'h0002: instruction = 'h66;
+                        'h0003: instruction = 'h07;
+						'h0004: instruction = 'h03;
 						
-                        'h0005: instruction = 'h07;
-                        'h0006: instruction = 'hC0;
-                        'h0007: instruction = 'h44;
-                        'h0008: instruction = 'hC1;
-						'h0009: instruction = 'hCB;
-						
-                        'h000A: instruction = 'h07;
-                        'h000B: instruction = 'hC0;
-                        'h000C: instruction = 'h44;
-                        'h000D: instruction = 'hC1;
-						'h000E: instruction = 'hCB;
-						
-                        'h000F: instruction = 'h07;
-                        'h0010: instruction = 'h03;
-                        'h0011: instruction = 'h00;
-						'h0012: instruction = 'h05;
-                        
-						'h0013: instruction = 'h00;
+                        'h0005: instruction = 'h00;
+                        'h0006: instruction = 'h00;
+
+//                        'h0000: instruction = 'h07;
+//                        'h0001: instruction = 'hC0;
+//                        'h0002: instruction = 'h44;
+//                        'h0003: instruction = 'hC1;
+//						'h0004: instruction = 'hCB;
+//						
+//                        'h0005: instruction = 'h07;
+//                        'h0006: instruction = 'hC0;
+//                        'h0007: instruction = 'h44;
+//                        'h0008: instruction = 'hC1;
+//						'h0009: instruction = 'hCB;
+//						
+//                        'h000A: instruction = 'h07;
+//                        'h000B: instruction = 'hC0;
+//                        'h000C: instruction = 'h44;
+//                        'h000D: instruction = 'hC1;
+//						'h000E: instruction = 'hCB;
+//						
+//                        'h000F: instruction = 'h07;
+//                        'h0010: instruction = 'h03;
+//                        'h0011: instruction = 'h00;
+//						'h0012: instruction = 'h05;
+//                        
+//						'h0013: instruction = 'h00;
 					endcase
 				end
 		end
