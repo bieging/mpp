@@ -151,12 +151,16 @@ module ctrl_module (clk, instruction, ctrl_signals);
 			
 			ctrl_signals[25] = ctrl_b_data[2]; // BUFcar
 			
-			ctrl_signals[26] = ctrl_b_data[6]; // ULAbus
+			ctrl_signals[26] = ctrl_b_data[1]; // ULAbus
 			
 			// EOI
 			if (decode_data == 8'b00000000)
 				begin
-					ctrl_signals[27] = ctrl_b_data[6]; 
+					ctrl_signals[27] = 1'b1; 
+				end
+			else
+				begin
+					ctrl_signals[27] = 1'b0; 
 				end
 			
 			#5 // Signals that have to wait to avoid race condition.

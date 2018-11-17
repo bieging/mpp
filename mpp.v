@@ -1,4 +1,4 @@
-	module mpp (clk, instruction, out_signals, program_addr, in, out);
+module mpp (clk, instruction, out_signals, program_addr, in, out);
 
 	input clk;
 	input [7:0] instruction;
@@ -20,6 +20,15 @@
 	
 	reg [1:0] reg_bank_sel;
 	wire [7:0] reg_bank_out;
+	
+	wire [7:0] acc_out;
+	wire [7:0] acc_buffer;
+	
+	reg [2:0] alu_sel;
+	reg [7:0] alu_buffer;
+	wire alu_fc;
+	wire alu_fz;
+	wire [7:0] alu_out;
 	
 	reg reset;
 	
@@ -79,6 +88,27 @@
 			.out	(reg_bank_out)
 		);
 		
+	accumulator acc
+		(
+			.en		(ctrl_signals[24]),
+			.load	(ctrl_signals[23]),
+			.reset	(reset),
+			.in		(bus),
+			.out	(acc_out),
+			.buffer	(acc_buffer)
+		);
+	
+	alu al
+		(
+			.sel	(alu_sel),
+			.en		(ctrl_signals[26]),
+			.in_a	(acc_buffer),
+			.in_b	(alu_buffer),
+			.flag_c	(alu_fc),
+			.flag_z	(alu_fz),
+			.out	(alu_out)
+		);
+		
 	initial
 		begin
 			out = 8'b00000000;
@@ -95,6 +125,8 @@
 			storage_data_in = 8'b00000000;
 			
 			dir_sp_buffer = 8'b00000000;
+			
+			alu_sel = 3'b000;
 			
 			reset = 1'b0;
 		end
@@ -118,6 +150,10 @@
 			reg_bank_sel[0] = ctrl_signals[14];
 			reg_bank_sel[1] = ctrl_signals[15];
 			
+			alu_sel[0] = ctrl_signals[11];
+			alu_sel[1] = ctrl_signals[12];
+			alu_sel[2] = ctrl_signals[13];
+			
 			// DIR buffer.
 			if (ctrl_signals[7] == 1'b1)
 				begin
@@ -139,8 +175,13 @@
 			#10
 			storage_cs = 0; // RAMcs
 		end
-		
-	always @ (storage_data_out or instruction or ctrl_signals[22])
+	
+	always @ (posedge ctrl_signals[25])
+		begin
+			alu_buffer <= bus;
+		end
+	
+	always @ (storage_data_out or instruction or ctrl_signals[22] or ctrl_signals[24] or ctrl_signals[26])
 		begin
 			if (out_signals[0] == 1'b1)
 				begin
@@ -152,8 +193,23 @@
 				end
 			else if (ctrl_signals[22] == 1'b1)
 				begin
+					#5
 					bus = reg_bank_out;
 				end
+			else if (ctrl_signals[24] == 1'b1)
+				begin
+					#5
+					bus = acc_out;
+				end
+			else if (ctrl_signals[26] == 1'b1)
+				begin
+					#5
+					bus = alu_out;
+				end
+//			else
+//				begin
+//					bus = 8'bzzzzzzzz;
+//				end
 		end
 	
 	always @ (program_low)
