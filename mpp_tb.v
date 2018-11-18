@@ -24,7 +24,7 @@ module mpp_tb ();
 	initial
 		begin
 			clk = 1'b0;
-			in = 8'b00000000;
+			in = 8'b00010100;
 			
 			#6000
 			
@@ -48,22 +48,21 @@ module mpp_tb ();
 					case (in_program_addr)
 						'h0000: instruction = 'h07;
 						'h0001: instruction = 'hC0;
-						'h0002: instruction = 'h22;
+						'h0002: instruction = 'h55;
 						'h0003: instruction = 'h07;
 						'h0004: instruction = 'hC1;
-						'h0005: instruction = 'h33;
-						'h0006: instruction = 'h04;
-						'h0007: instruction = 'hC1;
-						'h0008: instruction = 'h04;
-						'h0009: instruction = 'hD1;
+						'h0005: instruction = 'h66;
+						'h0006: instruction = 'h07;
+						'h0007: instruction = 'h06;
+						'h0008: instruction = 'h00;
+						'h0009: instruction = 'h0E;
 						'h000A: instruction = 'h07;
-						'h000B: instruction = 'hC0;
+						'h000B: instruction = 'h03;
 						'h000C: instruction = 'h00;
-						'h000D: instruction = 'h94;
-						'h000E: instruction = 'h07;
-						'h000F: instruction = 'h03;
-						'h0010: instruction = 'h00;
-						'h0011: instruction = 'h00;
+						'h000D: instruction = 'h00;
+						'h000E: instruction = 'h01;
+						'h000F: instruction = 'h07;
+						'h0010: instruction = 'h07;
 					endcase
 				end
 		end

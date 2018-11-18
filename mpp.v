@@ -170,6 +170,11 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 					storage_addr = storage_signals;
 				end
 			
+			if (ctrl_signals[16] == 1'b1)
+				begin
+					out <= bus;
+				end
+			
 			#5
 			storage_cs = ctrl_signals[18]; // RAMcs
 			#10
@@ -181,7 +186,7 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 			alu_buffer <= bus;
 		end
 	
-	always @ (storage_data_out or instruction or ctrl_signals[22] or ctrl_signals[24] or ctrl_signals[26])
+	always @ (*)
 		begin
 			if (out_signals[0] == 1'b1)
 				begin
@@ -205,6 +210,10 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 				begin
 					#5
 					bus = alu_out;
+				end
+			else if (ctrl_signals[17] == 1'b1)
+				begin
+					bus = in;
 				end
 //			else
 //				begin
