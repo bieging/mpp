@@ -33,7 +33,8 @@ module mpp_tb ();
 		
 	always
 		begin
-			#10 clk = !clk;
+			#10 clk     = !clk;
+			
 		end
 		
 	always @ (out_signals)
@@ -60,7 +61,7 @@ module mpp_tb ();
 						'h000B: instruction = 'h03;
 						'h000C: instruction = 'h00;
 						'h000D: instruction = 'h00;
-						'h000E: instruction = 'h01;
+						'h000E: instruction = 'h04;
 						'h000F: instruction = 'h07;
 						'h0010: instruction = 'h07;
 					endcase

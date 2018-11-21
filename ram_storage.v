@@ -30,7 +30,7 @@ module ram_storage
 				end
         end
 		
-	always @ (*)
+	always @ (cs)
 		begin
 			if (~cs == 1'b0)
 				begin

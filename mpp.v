@@ -38,6 +38,7 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 	wire [7:0] program_high;
 	reg [15:0] program_addr;
 	
+	wire sp_car;
 	wire [27:0] ctrl_signals;
 	
 	wire [7:0] storage_signals;
@@ -49,7 +50,8 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 		(
 			.clk			(clk),
 			.instruction	(instruction),
-			.ctrl_signals	(ctrl_signals)
+			.ctrl_signals	(ctrl_signals),
+			.sp_car			(sp_car)
 		);
 		
 	program_addresser pa
@@ -63,7 +65,7 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 		
 	inc_dec_counter sp
 		(
-			.set	(ctrl_signals[8]),
+			.set	(sp_car),
 			.reset	(reset),
 			.ctrl	(ctrl_signals[9]),
 			.out	(storage_signals)
@@ -145,7 +147,7 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 			program_signals[3] = ctrl_signals[2]; // PCHbus
 			program_signals[4] = ctrl_signals[3]; // PCLbus
 			
-			storage_data_in = instruction;
+			storage_data_in = bus;
 			
 			reg_bank_sel[0] = ctrl_signals[14];
 			reg_bank_sel[1] = ctrl_signals[15];
@@ -192,9 +194,17 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 				begin
 					bus = instruction;
 				end
-			else if (storage_rw == 1'b1)
+			else if (storage_cs == 1'b1)
 				begin
 					bus = storage_data_out;
+				end
+			else if (ctrl_signals[2] == 1'b1)
+				begin
+					bus = program_high;
+				end
+			else if (ctrl_signals[3] == 1'b1)
+				begin
+					bus = program_low;
 				end
 			else if (ctrl_signals[22] == 1'b1)
 				begin
@@ -215,10 +225,6 @@ module mpp (clk, instruction, out_signals, program_addr, in, out);
 				begin
 					bus = in;
 				end
-//			else
-//				begin
-//					bus = 8'bzzzzzzzz;
-//				end
 		end
 	
 	always @ (program_low)

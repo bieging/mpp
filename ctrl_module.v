@@ -1,9 +1,11 @@
-module ctrl_module (clk, instruction, ctrl_signals);
+module ctrl_module (clk, instruction, ctrl_signals, sp_car);
 
 	input clk;
 	input [7:0] instruction;
+	output sp_car;
 	output [27:0] ctrl_signals;
 	
+	reg sp_car;
 	reg cs;
 	
 	reg [3:0] decode_address;
@@ -46,6 +48,7 @@ module ctrl_module (clk, instruction, ctrl_signals);
 	initial
 		begin
 			cs = 1'b0;
+			sp_car = 1'b0;
 		
 			decode_address = 4'b0000;
 			decode_reg = 8'b00000000;
@@ -53,7 +56,7 @@ module ctrl_module (clk, instruction, ctrl_signals);
 		end
 		
 	assign incr_result = ctrl_addr + 1;
-		
+	
 	nor u1 (pclh_condition, ctrl_a_data[1], ctrl_a_data[2]);
 		
 	always @ (posedge ctrl_a_data[3])
@@ -81,6 +84,12 @@ module ctrl_module (clk, instruction, ctrl_signals);
 				begin
 					ctrl_addr <= decode_reg;
 				end
+		end
+		
+	always @ (*)
+		begin
+			#5
+			sp_car = ctrl_a_data[14] && clk;
 		end
 		
 	always @ (decode_data or ctrl_addr)
@@ -167,11 +176,6 @@ module ctrl_module (clk, instruction, ctrl_signals);
 			
 			ctrl_signals[6] = ctrl_a_data[12]; // SelDataPC
 			
-			// SPcar
-			if (clk == 1'b1)
-				begin
-					ctrl_signals[8] = ctrl_a_data[14];
-				end
 		end
 
 endmodule
